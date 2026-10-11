@@ -110,13 +110,8 @@ struct ServerConfig {
     uint32_t workerThreads{1};
     std::size_t toolsPageSize{DEFAULT_TOOLS_PAGE_SIZE};
     std::size_t resourcesPageSize{DEFAULT_RESOURCES_PAGE_SIZE};
-    // Advertise tools by default so MCP Inspector / clients enable the Tools tab.
-    // Prompts/resources are set when registered (see McpServerImplement::Add*).
-    ServerCapabilities capabilities{[] {
-        ServerCapabilities caps;
-        caps.tools = ToolsCapabilities{};
-        return caps;
-    }()};
+    // Capabilities follow registration (see McpServerImplement::Add*).
+    ServerCapabilities capabilities{};
 };
 
 struct MCPBaseType {

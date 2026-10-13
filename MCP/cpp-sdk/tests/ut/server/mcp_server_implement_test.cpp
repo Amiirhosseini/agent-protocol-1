@@ -332,6 +332,18 @@ TEST(McpServerImplementTest, CapabilitiesFollowRegistration)
     EXPECT_TRUE(server.GetCapabilities().tools.has_value());
     EXPECT_TRUE(server.GetCapabilities().prompts.has_value());
     EXPECT_TRUE(server.GetCapabilities().resources.has_value());
+
+    EXPECT_NO_THROW(server.RemoveTool(tool.name));
+    EXPECT_FALSE(server.GetCapabilities().tools.has_value());
+    EXPECT_TRUE(server.GetCapabilities().prompts.has_value());
+    EXPECT_TRUE(server.GetCapabilities().resources.has_value());
+
+    EXPECT_NO_THROW(server.RemovePrompt(prompt.name));
+    EXPECT_FALSE(server.GetCapabilities().prompts.has_value());
+    EXPECT_TRUE(server.GetCapabilities().resources.has_value());
+
+    EXPECT_NO_THROW(server.RemoveResource(resource.uri));
+    EXPECT_FALSE(server.GetCapabilities().resources.has_value());
 }
 
 TEST(McpServerImplementTest, ToolManagement_RemoveTool)
@@ -347,7 +359,9 @@ TEST(McpServerImplementTest, ToolManagement_RemoveTool)
     toolParams.outputSchema = tool.outputSchema;
 
     EXPECT_NO_THROW(server.AddTool(tool.name, tool.func, toolParams));
+    EXPECT_TRUE(server.GetCapabilities().tools.has_value());
     EXPECT_NO_THROW(server.RemoveTool(tool.name));
+    EXPECT_FALSE(server.GetCapabilities().tools.has_value());
 }
 
 TEST(McpServerImplementTest, ToolManagement_AddMultipleTools) {

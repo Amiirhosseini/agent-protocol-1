@@ -64,7 +64,7 @@ public:
         (void)ctx;
         sentCount_++;
         // JSONRPCMessage is move-only (unique_ptr members); round-trip via JSON.
-        lastSerialized_ = SerializeJSONRPCMessage(message);
+        lastSerialized_ = SerializeJSONRPCMessage(message, ctx.method);
         auto parsed = DeserializeJSONRPCMessage(lastSerialized_, ctx.method);
         lastMessage_ = std::move(parsed);
     }

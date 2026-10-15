@@ -112,10 +112,9 @@ void BaseSession::SendResponse(const RequestId& requestId, JSONRPCError error, R
     JSONRPCMessage msg = std::move(error);
 
     if (serverTransport_ != nullptr) {
-        {
-            std::lock_guard<std::mutex> lock(reqMtx);
-            sessionRequests.erase(requestId);
-        }
+        // Do not erase sessionRequests here: HandleCancelledNotification holds
+        // reqMtx (non-recursive). Callers without the lock must not race erase
+        // either — error paths leave the record; cleanup is a separate follow-up.
         if (!ctx.isCancelled) {
             serverTransport_->SendMessage(msg, ctx);
         }

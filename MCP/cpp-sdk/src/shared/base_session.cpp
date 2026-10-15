@@ -112,7 +112,13 @@ void BaseSession::SendResponse(const RequestId& requestId, JSONRPCError error, R
     JSONRPCMessage msg = std::move(error);
 
     if (serverTransport_ != nullptr) {
-        serverTransport_->SendMessage(msg, ctx);
+        {
+            std::lock_guard<std::mutex> lock(reqMtx);
+            sessionRequests.erase(requestId);
+        }
+        if (!ctx.isCancelled) {
+            serverTransport_->SendMessage(msg, ctx);
+        }
         return;
     }
 
